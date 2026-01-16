@@ -239,9 +239,9 @@ function printReceipt() {
   let targetURL = "";
   
   if (selectedService === 'receipt') {
-    targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Admission/PaymentSuccess.aspx?TranID=aa1e6c62c5c4c44f9691&amt=900&uid=" + encodeURIComponent(uid);
+    targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Admission/Sem1SuccessPage.aspx?uid=" + encodeURIComponent(uid);
   } else {
-    targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Admission/ShapathPatra.aspx?uid=" + encodeURIComponent(uid);
+    targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Admission/SapathPatra.aspx?uid=" + encodeURIComponent(uid);
   }
 
   const blobHTML = `<!DOCTYPE html><html><head><style>@page { size: A4; margin: 12mm; } @media print { body { zoom: 0.95; } }</style></head><body><iframe src="${targetURL}" style="width:100%;height:100vh;border:none;" onload="setTimeout(() => window.print(), 800)"></iframe></body></html>`;
