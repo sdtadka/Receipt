@@ -30,7 +30,6 @@
             flex-direction: column;
             align-items: center;
             padding-top: 50px;
-            /* सादिक भाई, यहाँ नीचे एक्स्ट्रा जगह दी गई है */
             padding-bottom: 80px; 
         }
 
@@ -48,7 +47,7 @@
             .btn-download { padding: 24px !important; font-size: 22px !important; border-radius: 20px !important; }
             .header-img { max-width: 400px !important; }
             .alert-text { font-size: 15px !important; }
-            body { padding-bottom: 120px; } /* कंप्यूटर पर और भी ज़्यादा जगह */
+            body { padding-bottom: 120px; }
         }
 
         .header-img {
@@ -130,7 +129,6 @@
         }
         .btn-download:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.5); }
 
-        /* फुटर एरिया */
         .footer-area {
             margin-top: 60px; 
             padding-top: 40px;
@@ -139,7 +137,6 @@
             align-items: center;
             border-top: 1px solid #f1f5f9; 
             width: 100%;
-            /* यहाँ भी नीचे जगह सुनिश्चित की गई है */
             margin-bottom: 20px; 
         }
         .copyright { font-size: 12px; color: #94a3b8; font-weight: 800; letter-spacing: 0.1em; }
@@ -165,6 +162,12 @@
         .share-container.active .social-menu a:nth-child(5) { transform: translate(-60px, 60px) scale(1); color: #FF0000; }
 
         .status { margin-top: 20px; font-size: 15px; color: var(--primary); font-weight: 800; }
+
+        /* प्रिंट के लिए विशेष CSS जो रसीद को सही शेप में रखेगा */
+        @media print {
+            body * { visibility: hidden; }
+            #printFrame { visibility: visible; position: fixed; left: 0; top: 0; width: 100%; height: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -173,7 +176,7 @@
     <img src="https://rsssc.org/assest/img/rsss-logo.jpeg" alt="RSS College Logo" class="header-img">
     <div class="full-divider"></div>
     
-    <h1>R.S.S SCIENCE COLLEGE,  SITAMARHI</h1>
+    <h1>R.S.S SCIENCE COLLEGE, SITAMARHI</h1>
     
     <div class="alert-container">
         <div class="marquee-content">
@@ -213,6 +216,8 @@
     </div>
 </div>
 
+<iframe id="printFrame" style="display:none;"></iframe>
+
 <script>
 let selectedService = 'receipt'; 
 
@@ -230,6 +235,7 @@ function printReceipt() {
   const uidInput = document.getElementById("uid");
   const uid = uidInput.value.trim();
   const status = document.getElementById("status");
+  const printFrame = document.getElementById("printFrame");
 
   if (!uid) { status.textContent = "❌ Please enter UID"; return; }
   
@@ -237,22 +243,30 @@ function printReceipt() {
   uidInput.value = ""; 
 
   let targetURL = "";
-  
   if (selectedService === 'receipt') {
     targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Admission/Sem1SuccessPage.aspx?uid=" + encodeURIComponent(uid);
   } else {
     targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Admission/SapathPatra.aspx?uid=" + encodeURIComponent(uid);
   }
 
-  const blobHTML = `<!DOCTYPE html><html><head><style>@page { size: A4; margin: 12mm; } @media print { body { zoom: 0.95; } }</style></head><body><iframe src="${targetURL}" style="width:100%;height:100vh;border:none;" onload="setTimeout(() => window.print(), 800)"></iframe></body></html>`;
-  const blob = new Blob([blobHTML], { type: "text/html" });
-  const blobURL = URL.createObjectURL(blob);
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.src = blobURL;
-  document.body.appendChild(iframe);
-  
-  setTimeout(() => { URL.revokeObjectURL(blobURL); status.textContent = "✅ Ready!"; }, 5000);
+  // सादिक भाई, यहाँ हमने Blob को हटाकर सीधे इसी पेज के Iframe में URL लोड किया है
+  // इससे 'Same-Origin' पॉलिसी की वजह से आपका लॉगिन बना रहेगा
+  printFrame.src = targetURL;
+
+  printFrame.onload = function() {
+    status.textContent = "✅ Ready! Opening Print Dialog...";
+    
+    // थोड़ा सा समय देना ज़रूरी है ताकि कंटेंट पूरी तरह लोड हो जाए
+    setTimeout(() => {
+        try {
+            printFrame.contentWindow.focus();
+            printFrame.contentWindow.print();
+        } catch (e) {
+            // अगर डायरेक्ट प्रिंट ब्लॉक हो, तो एक बैकअप तरीका
+            window.print();
+        }
+    }, 1000);
+  };
 }
 
 document.getElementById('uid').addEventListener('keypress', (e) => { if (e.key === 'Enter') printReceipt(); });
