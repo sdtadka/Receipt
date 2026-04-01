@@ -104,7 +104,7 @@
     </div>
     
     <div class="input-group">
-        <label id="serviceLabel">Fee Receipt Download</label>
+        <label id="serviceLabel">Exam Fee Receipt Download Semester III</label>
         <input type="text" id="uid" placeholder="Enter Student UID" autocomplete="off">
     </div>
 
@@ -149,7 +149,7 @@ function generateAndPrint() {
 
   let targetURL = "";
   if (selectedService === 'receipt') {
-    targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Registration/SemSuccessPage.aspx?uid=" + encodeURIComponent(uid);
+    targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Examination/SuccessPage.aspx?uid=" + encodeURIComponent(uid);
   } else {
     targetURL = "https://elibrary.rsssc.org/GraduationERP/Student/Admission/SapathPatra.aspx?uid=" + encodeURIComponent(uid);
   }
